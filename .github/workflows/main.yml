@@ -10,21 +10,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     strategy:
       matrix:
         node-version: [22.x]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Node.js
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-
-    - name: Install backend dependencies
+    - name: Install dependencies
       run: npm install
-
-    - name: Run backend tests
+    - name: Set up .env file
+      run: |
+        echo "MONGO_URI=mongodb://localhost:27017/blogger_test" >> .env
+        echo "PORT=5001" >> .env
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+    - name: Wait for MongoDB to be ready
+      run: sleep 15 # wait for MongoDB to start
+    - name: Run tests
       run: npm test
