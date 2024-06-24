@@ -2,23 +2,35 @@
 const request = require('supertest');
 const app = require('../server'); // Your Express app
 const User = require('../models/User');
-const BlogPost = require('../models/BlogPost');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 let token;
 let userId;
 let postId;
 
-beforeAll(async () => {
-  // Create a test user and get token
-  const user = await User.create({ username: 'testuser', email: 'testuser@example.com', password: 'password123' });
-  userId = user._id;
-  
-  const response = await request(app)
-    .post('/api/users/login')
-    .send({ email: 'testuser@example.com', password: 'password123' });
-  
-  token = response.body.token;
+beforeEach(async () => {
+  await User.deleteMany({});
+  try {
+    // Create a test user
+    const user = new User({
+      username: 'testuser',
+      email: 'testuser@example.com',
+      password: 'password123'
+    });
+    await user.save();
+
+    // Generate a token for the user
+    token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+    userId = user._id; // Set userId after user is saved
+
+    console.log('User created for tests:', user); // Log user details for debugging
+
+  } catch (error) {
+    console.error('Error setting up test user:', error);
+    throw error;
+  }
 });
 afterAll(async () => {
   await mongoose.connection.close();
