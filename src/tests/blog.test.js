@@ -3,6 +3,7 @@ const request = require('supertest');
 const app = require('../server'); // Your Express app
 const User = require('../models/User');
 const BlogPost = require('../models/BlogPost');
+const mongoose = require('mongoose');
 
 let token;
 let userId;
@@ -18,6 +19,9 @@ beforeAll(async () => {
     .send({ email: 'testuser@example.com', password: 'password123' });
   
   token = response.body.token;
+});
+afterAll(async () => {
+  await mongoose.connection.close();
 });
 
 describe('BlogPost CRUD', () => {
