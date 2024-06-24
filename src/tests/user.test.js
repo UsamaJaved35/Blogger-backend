@@ -1,10 +1,14 @@
 const app = require('../server'); // Your Express app
 const request = require('supertest');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
   beforeEach(async () => {
     // Clean up the database before each test
     await User.deleteMany({});
+  });
+  afterAll(async () => {
+    await mongoose.connection.close();
   });
 
   it('should register a new user', async () => {
