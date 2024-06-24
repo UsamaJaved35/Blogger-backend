@@ -20,6 +20,6 @@
     "supertest": "^7.0.0"
   },
   "scripts": {
-    "test": "jest --forceExit"
+    "test": "jest --forceExit --maxWorkers=1"
   }
 }

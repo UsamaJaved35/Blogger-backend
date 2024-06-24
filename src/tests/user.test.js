@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
   afterAll(async () => {
     await mongoose.connection.close();
   });
-
+describe('User Auth', () => {
   it('should register a new user', async () => {
     const res = await request(app)
       .post('/api/users/register')
@@ -83,4 +83,5 @@ const mongoose = require('mongoose');
 
     expect(res.statusCode).toEqual(401);
     expect(res.body).toHaveProperty('message', 'Invalid email or password');
-  });
+  })
+});
