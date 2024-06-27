@@ -9,6 +9,7 @@ const userRoutes = require('./routes/userRoutes');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const cors = require('cors');
 const PORT = process.env.PORT || 5000;
+const helmet = require('helmet');
 
 connectDB();
 
@@ -21,7 +22,7 @@ app.use(function(req, res, next) {
 app.use(cors({origin:true}));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-
+app.use(helmet());
 app.use('/api/blogs', blogRoutes);
 app.use('/api/users', userRoutes);
 
